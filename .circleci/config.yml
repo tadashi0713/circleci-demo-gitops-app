@@ -29,3 +29,6 @@ workflows:
           npm-run: lint
       - build-and-push-image:
           context: push-gcr
+          filters:
+            branches:
+              only: master
