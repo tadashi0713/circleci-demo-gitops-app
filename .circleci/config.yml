@@ -1,0 +1,31 @@
+version: 2.1
+
+orbs: # Orbs
+  node: circleci/node@5.0.0
+  gcp-gcr: circleci/gcp-gcr@0.13.0
+
+jobs:
+  build-and-push-image:
+    machine:
+      docker_layer_caching: true # Docker Layer Caching
+      resource_class: xlarge # Resource Class(Linux VM)
+    steps:
+      - checkout
+      - gcp-gcr/gcr-auth
+      - gcp-gcr/build-image:
+          image: circleci-demo-gitops
+          tag: '${CIRCLE_SHA1}'
+          registry-url: asia.gcr.io
+      - gcp-gcr/push-image:
+          image: circleci-demo-gitops
+          tag: '${CIRCLE_SHA1}'
+          registry-url: asia.gcr.io
+
+workflows:
+  test_and_deploy: 
+    jobs:
+      - node/run:
+          name: lint
+          npm-run: lint
+      - build-and-push-image:
+          context: push-gcr
