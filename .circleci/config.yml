@@ -24,7 +24,7 @@ jobs:
   
   create_release_pr:
     docker:
-      - image: linuxserver/yq:2.13.0
+      - image: mikefarah/yq:4.16.2
     steps:
       - github-cli/setup
       - github-cli/clone:
