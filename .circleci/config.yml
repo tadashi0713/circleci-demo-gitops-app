@@ -58,6 +58,8 @@ workflows:
             branches:
               only: master
       - create_release_pr:
-          context: gh-cli
+          context:
+            - gh-cli
+            - push-gcr
           # requires:
           #   - build_and_push_image
