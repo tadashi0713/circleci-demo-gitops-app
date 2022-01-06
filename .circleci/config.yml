@@ -29,6 +29,13 @@ jobs:
       - github-cli/setup
       - github-cli/clone:
           repo: git@github.com:tadashi0713/circleci-demo-gitops-manifest.git
+      - run:
+          name: Edit manifest file using yq
+          command: |
+            snap install yq
+            yq -ry '.spec.template.spec.containers[0].image
+            |="gcr.io/'${PROJECT_ID}'/'${CONTAINER_NAME}':'${COMMIT_HASH}'"'
+            deployment.yml.tmpl > deployment.yml
 
 workflows:
   test_and_deploy: 
