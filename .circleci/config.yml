@@ -1,7 +1,6 @@
 version: 2.1
 
 orbs: # Orbs
-  node: circleci/node@5.0.0
   gcp-gcr: circleci/gcp-gcr@0.13.0
   github-cli: circleci/github-cli@2.0.0
 
@@ -15,11 +14,11 @@ jobs:
       - gcp-gcr/gcr-auth
       - gcp-gcr/build-image:
           image: circleci-demo-gitops
-          tag: '${CIRCLE_SHA1}'
+          tag: '${CIRCLE_SHA1:0:7}'
           registry-url: asia.gcr.io
       - gcp-gcr/push-image:
           image: circleci-demo-gitops
-          tag: '${CIRCLE_SHA1}'
+          tag: '${CIRCLE_SHA1:0:7}'
           registry-url: asia.gcr.io
   
   create_release_pr:
@@ -35,16 +34,18 @@ jobs:
             wget -q https://github.com/mikefarah/yq/releases/download/v4.16.2/yq_linux_386
             sudo mv yq_linux_386 /usr/local/bin/yq
             sudo chmod +x /usr/local/bin/yq
-            yq -ry '.spec.template.spec.containers[0].image
-            |="gcr.io/'${PROJECT_ID}'/'${CONTAINER_NAME}':'${COMMIT_HASH}'"'
-            deployment.yml.tmpl > deployment.yml
+            yq e -i '.spec.template.spec.containers[0].image |="asia.gcr.io/'${GOOGLE_PROJECT_ID}'/circleci-demo-gitops:'${CIRCLE_SHA1:0:7}'"' deployment.yaml
+      - run:
+          name: Commit file
+          command: |
+            git checkout -b release-${CIRCLE_SHA1:0:7}
+            git add .
+            git commit -m"Release circleci-demo-gitops-app ${CIRCLE_SHA1:0:7}"
+            git push origin head
 
 workflows:
   test_and_deploy: 
     jobs:
-      - node/run:
-          name: lint
-          npm-run: lint
       - build_and_push_image:
           context: push-gcr
           filters:
