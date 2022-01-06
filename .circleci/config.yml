@@ -33,7 +33,7 @@ jobs:
           name: Edit manifest file using yq
           command: |
             wget https://github.com/mikefarah/yq/releases/download/v4.16.2/yq_linux_386 -O /usr/bin/yq
-            chmod +x /usr/bin/yq
+            sudo chmod +x /usr/bin/yq
             yq -ry '.spec.template.spec.containers[0].image
             |="gcr.io/'${PROJECT_ID}'/'${CONTAINER_NAME}':'${COMMIT_HASH}'"'
             deployment.yml.tmpl > deployment.yml
