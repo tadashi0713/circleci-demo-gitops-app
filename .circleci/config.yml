@@ -38,6 +38,8 @@ jobs:
       - run:
           name: Commit file
           command: |
+            git config --global user.email "gitops@example.com"
+            git config --global user.name "GitOps"
             git checkout -b release-${CIRCLE_SHA1:0:7}
             git add .
             git commit -m"Release circleci-demo-gitops-app ${CIRCLE_SHA1:0:7}"
