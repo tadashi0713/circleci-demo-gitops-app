@@ -42,11 +42,12 @@ jobs:
           name: Commit file
           command: |
             git config --global user.email "gitops@example.com"
-            git config --global user.name "GitOps"
+            git config --global user.name "GitOps Bot"
+            git remote set-url --push origin git@github.com:tadashi0713/circleci-demo-gitops-manifest.git
             git checkout -b release-${CIRCLE_SHA1:0:7}
             git add .
             git commit -m"Release circleci-demo-gitops-app ${CIRCLE_SHA1:0:7}"
-            git push origin head
+            git push origin HEAD
 
 workflows:
   test_and_deploy: 
