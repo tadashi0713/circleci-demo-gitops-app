@@ -6,7 +6,7 @@ orbs: # Orbs
   github-cli: circleci/github-cli@2.0.0
 
 jobs:
-  deploy:
+  build_and_push_image:
     machine:
       docker_layer_caching: true # Docker Layer Caching
       resource_class: large # Resource Class(Linux VM)
@@ -21,7 +21,14 @@ jobs:
           image: circleci-demo-gitops
           tag: '${CIRCLE_SHA1}'
           registry-url: asia.gcr.io
+  
+  create_release_pr:
+    docker:
+      - image: linuxserver/yq:2.13.0
+    steps:
       - github-cli/setup
+      - github-cli/clone:
+          repo: git@github.com:tadashi0713/circleci-demo-gitops-manifest.git
 
 workflows:
   test_and_deploy: 
@@ -29,10 +36,12 @@ workflows:
       - node/run:
           name: lint
           npm-run: lint
-      - deploy:
-          context:
-            - gh-cli
-            - push-gcr
+      - build_and_push_image:
+          context: push-gcr
           filters:
             branches:
               only: master
+      - create_release_pr:
+          context: gh-cli
+          requires:
+            - build_and_push_image
