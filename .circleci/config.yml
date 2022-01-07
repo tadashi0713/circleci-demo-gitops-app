@@ -48,6 +48,9 @@ jobs:
             git add .
             git commit -m"Release circleci-demo-gitops-app ${CIRCLE_SHA1:0:7}"
             git push origin HEAD
+      - run:
+          name: Create Pull Request
+          command: gh pr create -t "Release circleci-demo-gitops-app ${CIRCLE_SHA1:0:7}" -b ""
 
 workflows:
   test_and_deploy: 
@@ -61,5 +64,5 @@ workflows:
           context:
             - gh-cli
             - push-gcr
-          # requires:
-          #   - build_and_push_image
+          requires:
+            - build_and_push_image
