@@ -3,6 +3,7 @@ version: 2.1
 orbs: # Orbs
   gcp-gcr: circleci/gcp-gcr@0.13.0
   github-cli: circleci/github-cli@2.0.0
+  node: circleci/node@5.0.0
 
 jobs:
   build_and_push_image:
@@ -55,6 +56,12 @@ jobs:
 workflows:
   test_and_deploy: 
     jobs:
+      - node/run:
+          name: lint
+          npm-run: lint
+      - node/run:
+          name: build
+          npm-run: build
       - build_and_push_image:
           context: push-gcr
           filters:
