@@ -28,7 +28,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "17:ba:0b:50:af:aa:c9:a3:78:7b:18:68:d2:98:d0:c6"
+            - "${SSH_KEY_FINGERPRINT}"
       - github-cli/setup
       - github-cli/clone:
           repo: git@github.com:tadashi0713/circleci-demo-gitops-manifest.git
