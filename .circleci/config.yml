@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs: # Orbs
-  gcp-gcr: circleci/gcp-gcr@0.13.0
+  gcp-gcr: circleci/gcp-gcr@0.15.3
   github-cli: circleci/github-cli@2.0.0
   node: circleci/node@5.0.0
 
