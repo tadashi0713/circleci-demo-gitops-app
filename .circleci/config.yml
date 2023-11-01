@@ -14,7 +14,13 @@ jobs:
     steps:
       - checkout
       - gcp-cli/setup
-  
+      - run:
+          name:
+          command: |
+            gcloud auth configure-docker us-docker.pkg.dev
+            docker build ./ -t us-docker.pkg.dev/circleci-tadashi/circleci-demo-release/app
+            docker push us-docker.pkg.dev/circleci-tadashi/circleci-demo-release/app
+
   create_release_pr:
     docker:
       - image: cimg/base:2022.12
