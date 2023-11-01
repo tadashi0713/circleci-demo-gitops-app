@@ -1,7 +1,6 @@
 version: 2.1
 
 orbs: # Orbs
-  gcp-cli: circleci/gcp-cli@3.1.1
   github-cli: circleci/github-cli@2.0.0
   node: circleci/node@5.0.0
 
@@ -13,17 +12,19 @@ jobs:
       resource_class: large # Resource Class(Linux VM)
     steps:
       - checkout
-      - gcp-cli/setup
-      - run:
-          name:
-          command: |
-            gcloud auth configure-docker us-docker.pkg.dev
-            docker build ./ -t us-docker.pkg.dev/circleci-tadashi/circleci-demo-release/app
-            docker push us-docker.pkg.dev/circleci-tadashi/circleci-demo-release/app
-
+      - gcp-gcr/gcr-auth
+      - gcp-gcr/build-image:
+          image: circleci-demo-gitops
+          tag: '${CIRCLE_SHA1:0:7}'
+          registry-url: asia.gcr.io
+      - gcp-gcr/push-image:
+          image: circleci-demo-gitops
+          tag: '${CIRCLE_SHA1:0:7}'
+          registry-url: asia.gcr.io
+  
   create_release_pr:
     docker:
-      - image: cimg/base:2022.12
+      - image: cimg/base:2022.01
     steps:
       - github-cli/setup
       - github-cli/clone:
@@ -66,9 +67,9 @@ workflows:
           filters:
             branches:
               only: master
-      # - create_release_pr:
-      #     context:
-      #       - gh-cli
-      #       - push-gcr
-      #     requires:
-      #       - build_and_push_image
+      - create_release_pr:
+          context:
+            - gh-cli
+            - push-gcr
+          requires:
+            - build_and_push_image
