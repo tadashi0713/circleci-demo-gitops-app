@@ -24,7 +24,7 @@ jobs:
   
   create_release_pr:
     docker:
-      - image: cimg/base:2022.01
+      - image: cimg/base:2023.12
     steps:
       - github-cli/setup
       - github-cli/clone:
