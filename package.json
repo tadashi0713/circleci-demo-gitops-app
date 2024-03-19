@@ -13,7 +13,7 @@
     "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@types/node": "17.0.45",
+    "@types/node": "20.11.30",
     "@types/react": "18.2.33",
     "autoprefixer": "10.4.16",
     "eslint": "8.52.0",
